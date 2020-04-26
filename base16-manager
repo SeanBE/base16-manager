@@ -200,7 +200,7 @@ list_support() {
   echo "khamer/base16-dunst"
   echo "khamer/base16-termite"
   echo "nicodebo/base16-fzf"
-  echo "nicodebo/base16-zathura"
+  echo "seanBE/base16-zathura"
   echo "theova/base16-qutebrowser"
   echo "rkubosz/base16-sway"
   echo "mattdavis90/base16-tmux"
@@ -263,7 +263,7 @@ set_theme() {
   for package in $packages; do
     case "$package" in
       "0xdec/base16-rofi")
-        set_rofi "$theme"
+        set_rofi "$package" "$theme"
         ;;
       "chriskempson/base16-shell")
         set_shell "$package" "$theme"
@@ -280,8 +280,8 @@ set_theme() {
       "nicodebo/base16-fzf")
         set_fzf "$package" "$theme"
         ;;
-      "nicodebo/base16-zathura")
-        set_zathura "$package" "$theme" 
+      "seanBE/base16-zathura")
+        set_zathura "$package" "$theme"
         ;;
       "khamer/base16-termite")
         set_generic "$package" "$theme" "#" "=" "$HOME/.config/termite/config"
@@ -430,29 +430,15 @@ set_by_copy() {
 set_zathura() {
   local package=$1
   local theme=$2
-  local configd="$HOME/.config/zathura/"
-  local zathurarc="$configd/zathurarc"
-  local zathura_colors="$configd/zathura_colors"
-  local file="$DATA_PATH/$package/xresources/base16-$theme.Xresources"
+  local theme_cfg="$DATA_PATH/$package/build_schemes/base16-$theme.config"
 
-  # get template and handling for inexisting templates
-  if ls "$DATA_PATH/$package"/*/"base16-$theme."* &>/dev/null; then
-    file=$(ls "$DATA_PATH/$package"/*/"base16-$theme."* )
-  else
+  if ! file_exists "$theme_cfg"; then
     err "$package: theme $theme not found."
     return 1
   fi
-
-  if [ -f $zathura_colors ]; then
-      mv $zathura_colors "$zathura_colors.bac"
-  fi
   
-  cp $file $zathura_colors
-
-  # add new line to include colors to Xresources
-  line_in_file "$zathurarc" \
-               "^include\\s+\"zathura_colors\"$" \
-               "include \"zathura_colors\""
+  # make sure to have "include zathura_theme" in zathurarc
+  cp $theme_cfg "${XDG_CONFIG_HOME:-$HOME/.config}/zathura/zathura_theme"
 }
 
 
@@ -558,11 +544,12 @@ set_random() {
 
 
 set_rofi() {
-  local theme=$1
+  local package=$1
+  local theme=$2
 
   # get template and handling for inexisting templates
-  if ls "$DATA_PATH/0xdec/base16-rofi/themes/base16-$theme.rasi" &>/dev/null; then
-    file=$(ls "$DATA_PATH/0xdec/base16-rofi/themes/base16-$theme.rasi" )
+  if ls "$DATA_PATH/$package/themes/base16-$theme.rasi" &>/dev/null; then
+    file=$(ls "$DATA_PATH/$package/themes/base16-$theme.rasi" )
   else
     err "$package: theme $theme not found."
     return 1
@@ -571,10 +558,7 @@ set_rofi() {
   # using a separate configuration file for the theme (theme.rasi)
   # you can import it from main configuration (with @theme "theme")
   # https://github.com/davatorium/rofi/wiki/Configuring-Rofi#splitting-configuration-over-multiple-files
-  local ROFI_THEME_CFG="${XDG_CONFIG_HOME:-$HOME/.config}/rofi/theme.rasi"
-
-  # overwrite current theme
-  printf "@theme \"%s\"" "$file" > "$ROFI_THEME_CFG"
+  printf "@theme \"%s\"" "$file" > "${XDG_CONFIG_HOME:-$HOME/.config}/rofi/theme.rasi"
 }
 
 set_tmux(){
