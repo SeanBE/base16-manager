@@ -565,13 +565,11 @@ set_tmux(){
   local package=$1
   local theme=$2
   local file="$DATA_PATH/$package/colors/base16-$theme.conf"
-  local TMUX_CONFIG="$HOME/.tmux.conf"
 
   if ! file_exists "$file"; then
     err "Tmux theme $theme not found"
   else
-    sed -i "/source ${DATA_PATH//\//\\/}.*base16-/d" $TMUX_CONFIG
-    echo "source $file" >> $TMUX_CONFIG
+    cp "$file" "$HOME/.tmux/config.d/colors"
   fi
 }
 
