@@ -204,6 +204,7 @@ list_support() {
   echo "theova/base16-qutebrowser"
   echo "rkubosz/base16-sway"
   echo "mattdavis90/base16-tmux"
+  echo "eluminae/base16-mako"
 }
 
 # print uninstalled packages which are supported
@@ -306,6 +307,9 @@ set_theme() {
         ;;
       "mattdavis90/base16-tmux")
         set_by_copy "$package" "$theme" "$HOME/.tmux/config.d/colors" "conf"
+        ;;
+      "eluminae/base16-mako")
+        set_by_copy "$package" "$theme" "$HOME/.config/mako/colors" "config"
         ;;
       *)
         err "Package $package is not (yet) supported."
