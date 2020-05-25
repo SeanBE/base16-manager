@@ -204,7 +204,7 @@ list_support() {
   echo "theova/base16-qutebrowser"
   echo "rkubosz/base16-sway"
   echo "mattdavis90/base16-tmux"
-  echo "eluminae/base16-mako"
+  echo "seanBE/base16-weechat"
 }
 
 # print uninstalled packages which are supported
@@ -310,6 +310,9 @@ set_theme() {
         ;;
       "eluminae/base16-mako")
         set_by_copy "$package" "$theme" "$HOME/.config/mako/colors" "config"
+        ;;
+      "seanBE/base16-weechat")
+        set_by_copy "$package" "$theme" "$HOME/.weechat/theme.conf" "config"
         ;;
       *)
         err "Package $package is not (yet) supported."
@@ -440,11 +443,10 @@ set_zathura() {
     err "$package: theme $theme not found."
     return 1
   fi
-  
-  # make sure to have "include zathura_theme" in zathurarc
-  cp $theme_cfg "${XDG_CONFIG_HOME:-$HOME/.config}/zathura/zathura_theme"
-}
 
+  # make sure to have "include zathura_theme" in zathurarc
+  cp "$theme_cfg" "${XDG_CONFIG_HOME:-$HOME/.config}/zathura/zathura_theme"
+}
 
 set_dunst() {
   local package=$1
