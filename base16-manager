@@ -305,7 +305,7 @@ set_theme() {
         set_by_copy "$package" "$theme" "$HOME/.config/sway/colorscheme" "config"
         ;;
       "mattdavis90/base16-tmux")
-        set_tmux "$package" "$theme"
+        set_by_copy "$package" "$theme" "$HOME/.tmux/config.d/colors" "conf"
         ;;
       *)
         err "Package $package is not (yet) supported."
@@ -559,18 +559,6 @@ set_rofi() {
   # you can import it from main configuration (with @theme "theme")
   # https://github.com/davatorium/rofi/wiki/Configuring-Rofi#splitting-configuration-over-multiple-files
   printf "@theme \"%s\"" "$file" > "${XDG_CONFIG_HOME:-$HOME/.config}/rofi/theme.rasi"
-}
-
-set_tmux(){
-  local package=$1
-  local theme=$2
-  local file="$DATA_PATH/$package/colors/base16-$theme.conf"
-
-  if ! file_exists "$file"; then
-    err "Tmux theme $theme not found"
-  else
-    cp "$file" "$HOME/.tmux/config.d/colors"
-  fi
 }
 
 set_xresources() {
