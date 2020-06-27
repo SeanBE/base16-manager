@@ -204,6 +204,7 @@ list_support() {
   echo "theova/base16-qutebrowser"
   echo "rkubosz/base16-sway"
   echo "mattdavis90/base16-tmux"
+  echo "eluminae/base16-mako"
   echo "seanBE/base16-weechat"
 }
 
@@ -310,7 +311,7 @@ set_theme() {
         set_by_copy "$package" "$theme" "$HOME/.tmux/config.d/colors" "conf"
         ;;
       "eluminae/base16-mako")
-        set_by_copy "$package" "$theme" "$HOME/.config/mako/colors" "config"
+        set_mako "$package" "$theme"
         ;;
       "seanBE/base16-weechat")
         set_by_copy "$package" "$theme" "$HOME/.weechat/theme.conf" "config"
@@ -435,18 +436,24 @@ set_by_copy() {
   cp "$file" "$config"
 }
 
-set_zathura() {
+set_mako() {
+  # keep config + theme separate and merge.
+  # no include directives with mako.
   local package=$1
   local theme=$2
-  local theme_cfg="$DATA_PATH/$package/build_schemes/base16-$theme.config"
 
-  if ! file_exists "$theme_cfg"; then
+  local base="$HOME/.config/mako/base"
+  local merged="$HOME/.config/mako/config"
+
+  if ls "$DATA_PATH/$package"/*/"base16-$theme."* &>/dev/null; then
+    file=$(ls "$DATA_PATH/$package"/*/"base16-$theme.config" )
+  else
     err "$package: theme $theme not found."
     return 1
   fi
 
-  # make sure to have "include zathura_theme" in zathurarc
-  cp "$theme_cfg" "${XDG_CONFIG_HOME:-$HOME/.config}/zathura/zathura_theme"
+  cp "$merged" "$merged.bac"
+  cat "$base" "$file" > "$merged"
 }
 
 set_dunst() {
