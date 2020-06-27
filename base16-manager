@@ -282,7 +282,8 @@ set_theme() {
         set_fzf "$package" "$theme"
         ;;
       "seanBE/base16-zathura")
-        set_zathura "$package" "$theme"
+        # make sure to have "include zathura_theme" in zathurarc
+        set_by_copy "$package" "$theme" "${XDG_CONFIG_HOME:-$HOME/.config}/zathura/zathura_theme" "config"
         ;;
       "khamer/base16-termite")
         set_generic "$package" "$theme" "#" "=" "$HOME/.config/termite/config"
